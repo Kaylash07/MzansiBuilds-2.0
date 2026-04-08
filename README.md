@@ -94,6 +94,143 @@ Server starts on http://localhost:5000. That's it — SQLite creates the databas
 - Public user profiles
 - Progress bars based on milestones
 
+## Architecture
+
+```mermaid
+flowchart TD
+    Browser["Browser (HTML/CSS/JS)"]
+    API["api.js — API Client"]
+    Flask["Flask App Factory"]
+
+    API -->|HTTP + JWT| Flask
+
+    Browser --> API
+
+    Flask --> Auth["auth.py"]
+    Flask --> Projects["projects.py"]
+    Flask --> Feed["feed.py"]
+    Flask --> Comments["comments.py"]
+    Flask --> Collabs["collaborations.py"]
+    Flask --> Notifs["notifications.py"]
+    Flask --> Support["support.py"]
+    Flask --> Celebration["celebration.py"]
+    Flask --> Activities["activities.py"]
+
+    Auth --> DB[(SQLite)]
+    Projects --> DB
+    Feed --> DB
+    Comments --> DB
+    Collabs --> DB
+    Notifs --> DB
+    Support --> DB
+    Celebration --> DB
+    Activities --> DB
+
+    Comments -->|async| Email["Email Service"]
+    Collabs -->|async| Email
+```
+
+## Database ER Diagram
+
+```mermaid
+erDiagram
+    USER {
+        int id PK
+        string username UK
+        string email UK
+        string password_hash
+        string bio
+        string avatar_url
+        datetime created_at
+    }
+
+    PROJECT {
+        int id PK
+        string title
+        text description
+        string tech_stack
+        string repo_url
+        string category
+        string stage
+        text support_needed
+        bool is_completed
+        datetime completed_at
+        datetime created_at
+        datetime updated_at
+        int owner_id FK
+    }
+
+    MILESTONE {
+        int id PK
+        string title
+        text description
+        bool is_achieved
+        datetime achieved_at
+        int project_id FK
+    }
+
+    COMMENT {
+        int id PK
+        text content
+        datetime created_at
+        int author_id FK
+        int project_id FK
+    }
+
+    COLLABORATION_REQUEST {
+        int id PK
+        text message
+        string status
+        datetime created_at
+        int requester_id FK
+        int project_id FK
+    }
+
+    NOTIFICATION {
+        int id PK
+        string type
+        text message
+        bool is_read
+        datetime created_at
+        int user_id FK
+        int project_id FK
+        int triggered_by_id FK
+    }
+
+    ACTIVITY {
+        int id PK
+        string type
+        text message
+        text detail
+        datetime created_at
+        int project_id FK
+        int user_id FK
+    }
+
+    SUPPORT_REPORT {
+        int id PK
+        string category
+        string subject
+        text description
+        string priority
+        string status
+        datetime created_at
+        int user_id FK
+    }
+
+    USER ||--o{ PROJECT : owns
+    USER ||--o{ COMMENT : writes
+    USER ||--o{ COLLABORATION_REQUEST : sends
+    USER ||--o{ NOTIFICATION : receives
+    USER ||--o{ SUPPORT_REPORT : submits
+    PROJECT ||--o{ MILESTONE : has
+    PROJECT ||--o{ COMMENT : has
+    PROJECT ||--o{ COLLABORATION_REQUEST : has
+    PROJECT ||--o{ NOTIFICATION : about
+    PROJECT ||--o{ ACTIVITY : logs
+    USER ||--o{ ACTIVITY : triggers
+```
+
 ## Colours
 
 Green, white, and black — South African inspired. The green is `#00a86b`.
