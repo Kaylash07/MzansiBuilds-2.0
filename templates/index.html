@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MzansiBuilds - Build in Public, Together</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="navigate('home')">
+      Mzansi<span>Builds</span>
+    </div>
+    <ul class="navbar-nav">
+      <li><a href="#" onclick="navigate('feed')" id="nav-feed">Live Feed</a></li>
+      <li><a href="#" onclick="navigate('celebration')" id="nav-celebration">🎉 Celebration Wall</a></li>
+      <li id="nav-auth-links">
+        <a href="#" onclick="navigate('login')" id="nav-login">Login</a>
+        <a href="#" onclick="navigate('register')" id="nav-register" class="btn btn-primary btn-sm" style="color:var(--white);">Register</a>
+      </li>
+      <li id="nav-user-menu" style="display:none;">
+        <a href="#" onclick="navigate('dashboard')" id="nav-dashboard">Dashboard</a>
+        <a href="#" onclick="navigate('new-project')" id="nav-new-project">+ New Project</a>
+        <a href="#" onclick="navigate('my-projects')" id="nav-my-projects">My Projects</a>
+        <a href="#" onclick="navigate('notifications')" id="nav-notifications" style="position:relative;">🔔 Notifications <span id="notif-badge" class="notif-badge" style="display:none;">0</span></a>
+        <a href="#" onclick="openSupportModal()" id="nav-support">🛟 Support</a>
+      </li>
+      <li id="nav-user-badge" style="display:none;">
+        <div class="user-badge" onclick="navigate('profile')" style="cursor:pointer;" title="View Profile">
+          <div class="user-avatar" id="nav-avatar"></div>
+          <span id="nav-username"></span>
+        </div>
+      </li>
+      <li id="nav-logout-li" style="display:none;">
+        <button onclick="logout()">Logout</button>
+      </li>
+      <li>
+        <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ===== HOME PAGE ===== -->
+  <div id="page-home" class="page active">
+    <div class="container">
+      <div class="hero">
+        <h1>Build in Public, <span>Together</span> 🚀</h1>
+        <p>Share your projects, track your progress, collaborate with fellow South African developers, and celebrate your wins!</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="navigate('register')">Get Started</button>
+          <button class="btn btn-outline-white" onclick="navigate('feed')">Explore Projects</button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="home-stats">
+        <div class="stat-card">
+          <div class="stat-number" id="stat-builders">0</div>
+          <div class="stat-label">Builders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-projects">0</div>
+          <div class="stat-label">Projects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-completed">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-collabs">0</div>
+          <div class="stat-label">Collaborations</div>
+        </div>
+      </div>
+
+      <h2 class="section-title">🔥 Latest Projects</h2>
+      <div class="grid-2" id="home-latest-projects"></div>
+    </div>
+  </div>
+
+  <!-- ===== REGISTER PAGE ===== -->
+  <div id="page-register" class="page">
+    <div class="container">
+      <div class="auth-container">
+        <div class="card">
+          <h2>Join MzansiBuilds ✊</h2>
+          <p class="subtitle">Start building in public today</p>
+          <div class="alert alert-error" id="register-error"></div>
+          <form onsubmit="handleRegister(event)">
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" class="form-control" id="reg-username" placeholder="e.g. devkay" required minlength="3">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control" id="reg-email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" class="form-control" id="reg-password" placeholder="Min 6 characters" required minlength="6">
+            </div>
+            <div class="form-group">
+              <label>Bio (optional)</label>
+              <textarea class="form-control" id="reg-bio" rows="2" placeholder="Tell us about yourself..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" id="reg-btn">Create Account</button>
+          </form>
+          <p class="auth-switch">Already have an account? <a href="#" onclick="navigate('login')">Login</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LOGIN PAGE ===== -->
+  <div id="page-login" class="page">
+    <div class="container">
+      <div class="auth-container">
+        <div class="card">
+          <h2>Welcome Back 👋</h2>
+          <p class="subtitle">Login to continue building</p>
+          <div class="alert alert-error" id="login-error"></div>
+          <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control" id="login-email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" class="form-control" id="login-password" placeholder="Your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" id="login-btn">Login</button>
+          </form>
+          <p class="auth-switch" style="margin-bottom:0.5rem;"><a href="#" onclick="navigate('forgot-password')">Forgot your password?</a></p>
+          <p class="auth-switch">Don't have an account? <a href="#" onclick="navigate('register')">Register</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FORGOT PASSWORD PAGE ===== -->
+  <div id="page-forgot-password" class="page">
+    <div class="container">
+      <div class="auth-container">
+        <div class="card">
+          <h2>Reset Password 🔑</h2>
+          <p class="subtitle">Enter your email to receive a reset code</p>
+          <div class="alert alert-error" id="forgot-error"></div>
+          <div class="alert alert-success" id="forgot-success"></div>
+
+          <!-- Step 1: Request code -->
+          <div id="forgot-step1">
+            <form onsubmit="handleForgotPassword(event)">
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" class="form-control" id="forgot-email" placeholder="you@example.com" required>
+              </div>
+              <button type="submit" class="btn btn-primary" id="forgot-btn">Send Reset Code</button>
+            </form>
+          </div>
+
+          <!-- Step 2: Enter code + new password -->
+          <div id="forgot-step2" style="display:none;">
+            <form onsubmit="handleResetPassword(event)">
+              <div class="form-group">
+                <label>Reset Code</label>
+                <input type="text" class="form-control" id="reset-code" placeholder="6-digit code" required maxlength="6">
+              </div>
+              <div class="form-group">
+                <label>New Password</label>
+                <input type="password" class="form-control" id="reset-new-password" placeholder="Min 6 characters" required minlength="6">
+              </div>
+              <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" class="form-control" id="reset-confirm-password" placeholder="Confirm password" required minlength="6">
+              </div>
+              <button type="submit" class="btn btn-primary" id="reset-btn">Reset Password</button>
+            </form>
+          </div>
+
+          <p class="auth-switch">Remember your password? <a href="#" onclick="navigate('login')">Login</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE PAGE ===== -->
+  <div id="page-profile" class="page">
+    <div class="container">
+      <div class="auth-container" style="max-width:540px;">
+        <div class="card" style="padding:2.5rem;">
+          <div style="text-align:center;margin-bottom:1.5rem;">
+            <div class="profile-avatar-wrapper" onclick="document.getElementById('avatar-file-input').click()" title="Change profile picture">
+              <div class="celebration-avatar" id="profile-avatar" style="width:72px;height:72px;font-size:2rem;margin:0 auto;overflow:hidden;"></div>
+              <div class="avatar-edit-overlay">📷</div>
+              <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;" onchange="handleAvatarUpload(this)">
+            </div>
+            <h2 id="profile-display-name" style="font-size:1.4rem;font-weight:800;"></h2>
+            <p id="profile-display-email" style="color:var(--gray-500);font-size:0.9rem;"></p>
+            <p id="profile-display-joined" style="color:var(--gray-400);font-size:0.8rem;margin-top:0.25rem;"></p>
+          </div>
+
+          <div id="profile-display-bio" style="text-align:center;color:var(--gray-600);font-size:0.9rem;margin-bottom:1.5rem;padding:0.75rem;background:var(--gray-100);border-radius:var(--radius);"></div>
+
+          <div class="stats-grid" style="margin-bottom:1.5rem;">
+            <div class="stat-card">
+              <div class="stat-number" id="profile-stat-projects">0</div>
+              <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="profile-stat-completed">0</div>
+              <div class="stat-label">Completed</div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openEditProfileModal()">✏️ Edit Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PUBLIC PROFILE PAGE ===== -->
+  <div id="page-user" class="page">
+    <div class="container">
+      <div class="auth-container" style="max-width:640px;">
+        <div class="card" style="padding:2.5rem;">
+          <div style="text-align:center;margin-bottom:1.5rem;">
+            <div class="celebration-avatar" id="pub-avatar" style="width:72px;height:72px;font-size:2rem;margin:0 auto 0.75rem;overflow:hidden;"></div>
+            <h2 id="pub-display-name" style="font-size:1.4rem;font-weight:800;"></h2>
+            <p id="pub-display-joined" style="color:var(--gray-400);font-size:0.8rem;margin-top:0.25rem;"></p>
+          </div>
+          <div id="pub-display-bio" style="text-align:center;color:var(--gray-600);font-size:0.9rem;margin-bottom:1.5rem;padding:0.75rem;background:var(--gray-100);border-radius:var(--radius);"></div>
+          <div class="stats-grid" style="margin-bottom:1.5rem;">
+            <div class="stat-card">
+              <div class="stat-number" id="pub-stat-projects">0</div>
+              <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="pub-stat-completed">0</div>
+              <div class="stat-label">Completed</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="section-title" style="margin-top:1.5rem;">🚀 Projects</h3>
+        <div id="pub-projects-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EDIT PROFILE MODAL ===== -->
+  <div class="modal-overlay" id="profile-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>✏️ Edit Profile</h3>
+        <button class="modal-close" onclick="closeEditProfileModal()">&times;</button>
+      </div>
+      <div class="alert alert-error" id="profile-modal-error"></div>
+      <div class="alert alert-success" id="profile-modal-success"></div>
+      <form onsubmit="handleProfileUpdate(event)">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" class="form-control" id="edit-username" required minlength="3">
+        </div>
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea class="form-control" id="edit-bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Profile Picture</label>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div class="celebration-avatar" id="edit-avatar-preview" style="width:48px;height:48px;font-size:1.2rem;overflow:hidden;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <input type="file" class="form-control" id="edit-avatar-file" accept="image/png,image/jpeg,image/gif,image/webp" style="padding:0.4rem;">
+              <small style="color:var(--gray-400);font-size:0.8rem;">PNG, JPG, GIF or WebP (max 2MB)</small>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.75rem;margin-top:1.25rem;">
+          <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center;">Save Changes</button>
+          <button type="button" class="btn btn-outline" onclick="closeEditProfileModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD PAGE ===== -->
+  <div id="page-dashboard" class="page">
+    <div class="container">
+      <div class="flex-between" style="margin-bottom:1.5rem;">
+        <h2 class="section-title" style="margin-bottom:0;">📊 My Dashboard</h2>
+        <button class="btn btn-primary" onclick="openNewProjectModal()">+ New Project</button>
+      </div>
+
+      <div class="stats-grid" id="dash-stats">
+        <div class="stat-card">
+          <div class="stat-number" id="dash-total">0</div>
+          <div class="stat-label">My Projects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="dash-active">0</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="dash-done">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+
+      <div id="my-projects-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== MY PROJECTS PAGE ===== -->
+  <div id="page-my-projects" class="page">
+    <div class="container">
+      <div class="flex-between" style="margin-bottom:1.5rem;">
+        <h2 class="section-title" style="margin-bottom:0;">🚀 My Projects</h2>
+        <button class="btn btn-primary" onclick="openNewProjectModal()">+ New Project</button>
+      </div>
+      <div id="my-projects-page-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== NOTIFICATIONS PAGE ===== -->
+  <div id="page-notifications" class="page">
+    <div class="container">
+      <div class="flex-between" style="margin-bottom:1.5rem;">
+        <h2 class="section-title" style="margin-bottom:0;">🔔 Notifications</h2>
+        <button class="btn btn-outline btn-sm" onclick="markAllRead()">Mark All as Read</button>
+      </div>
+      <div id="notifications-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== LIVE FEED PAGE ===== -->
+  <div id="page-feed" class="page">
+    <div class="container">
+      <h2 class="section-title">🌐 Live Feed <small>See what developers are building</small></h2>
+
+      <div class="search-bar" style="margin-bottom:1rem;">
+        <div style="position:relative;">
+          <input type="text" class="form-control" id="feed-search" placeholder="Search projects, tech, or developers..." style="padding-left:2.5rem;" oninput="debounceSearch()">
+          <span style="position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:1.1rem;">🔍</span>
+        </div>
+      </div>
+
+      <div class="filter-bar" id="feed-filters">
+        <button class="filter-btn active" onclick="filterFeed('')">All</button>
+        <button class="filter-btn" onclick="filterFeed('idea')">💡 Idea</button>
+        <button class="filter-btn" onclick="filterFeed('planning')">📋 Planning</button>
+        <button class="filter-btn" onclick="filterFeed('in-progress')">🔨 In Progress</button>
+        <button class="filter-btn" onclick="filterFeed('testing')">🧪 Testing</button>
+        <button class="filter-btn" onclick="filterFeed('completed')">✅ Completed</button>
+      </div>
+
+      <div class="filter-bar" id="feed-category-filters" style="margin-top:0.5rem;">
+        <button class="filter-btn active" onclick="filterCategory('')">All Categories</button>
+        <button class="filter-btn" onclick="filterCategory('web')">🌐 Web</button>
+        <button class="filter-btn" onclick="filterCategory('mobile')">📱 Mobile</button>
+        <button class="filter-btn" onclick="filterCategory('api')">🔌 API</button>
+        <button class="filter-btn" onclick="filterCategory('data-science')">📊 Data</button>
+        <button class="filter-btn" onclick="filterCategory('ai-ml')">🤖 AI/ML</button>
+        <button class="filter-btn" onclick="filterCategory('devops')">⚙️ DevOps</button>
+        <button class="filter-btn" onclick="filterCategory('iot')">📡 IoT</button>
+        <button class="filter-btn" onclick="filterCategory('fintech')">💰 FinTech</button>
+        <button class="filter-btn" onclick="filterCategory('edtech')">📚 EdTech</button>
+        <button class="filter-btn" onclick="filterCategory('healthtech')">🏥 Health</button>
+        <button class="filter-btn" onclick="filterCategory('gaming')">🎮 Gaming</button>
+        <button class="filter-btn" onclick="filterCategory('other')">🔧 Other</button>
+      </div>
+
+      <div id="feed-list"></div>
+      <div id="feed-pagination" style="text-align:center;margin-top:1.5rem;"></div>
+    </div>
+  </div>
+
+  <!-- ===== PROJECT DETAIL PAGE ===== -->
+  <div id="page-project" class="page">
+    <div class="container">
+      <div id="project-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- ===== CELEBRATION WALL ===== -->
+  <div id="page-celebration" class="page">
+    <div class="container">
+      <div class="celebration-hero">
+        <h1>🎉 Celebration Wall</h1>
+        <p>Honouring developers who have completed their projects and built in public!</p>
+      </div>
+      <div class="grid-2" id="celebration-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== NEW/EDIT PROJECT MODAL ===== -->
+  <div class="modal-overlay" id="project-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="project-modal-title">New Project</h3>
+        <button class="modal-close" onclick="closeProjectModal()">&times;</button>
+      </div>
+      <div class="alert alert-error" id="project-modal-error"></div>
+      <form onsubmit="handleProjectSubmit(event)">
+        <input type="hidden" id="pm-id">
+        <div class="form-group">
+          <label>Project Title *</label>
+          <input type="text" class="form-control" id="pm-title" placeholder="My Awesome App" required>
+        </div>
+        <div class="form-group">
+          <label>Description *</label>
+          <textarea class="form-control" id="pm-description" placeholder="What are you building and why?" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tech Stack</label>
+          <div class="tag-input-wrapper" id="pm-techstack-wrapper">
+            <div class="tag-input-tags" id="pm-techstack-tags"></div>
+            <input type="text" class="tag-input-field" id="pm-techstack" placeholder="Type and press Enter (e.g. Python, React)" onkeydown="handleTagKeydown(event)">
+          </div>
+          <small style="color:var(--gray-400);font-size:0.8rem;">Press Enter or comma to add a tag</small>
+        </div>
+        <div class="form-group">
+          <label>Repository URL</label>
+          <input type="url" class="form-control" id="pm-repo" placeholder="https://github.com/...">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select class="form-control" id="pm-category">
+            <option value="">Select a category...</option>
+            <option value="web">🌐 Web App</option>
+            <option value="mobile">📱 Mobile App</option>
+            <option value="api">🔌 API / Backend</option>
+            <option value="data-science">📊 Data Science</option>
+            <option value="ai-ml">🤖 AI / Machine Learning</option>
+            <option value="devops">⚙️ DevOps / Cloud</option>
+            <option value="iot">📡 IoT / Hardware</option>
+            <option value="fintech">💰 FinTech</option>
+            <option value="edtech">📚 EdTech</option>
+            <option value="healthtech">🏥 HealthTech</option>
+            <option value="gaming">🎮 Gaming</option>
+            <option value="other">🔧 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Stage *</label>
+          <select class="form-control" id="pm-stage" required>
+            <option value="idea">💡 Idea</option>
+            <option value="planning">📋 Planning</option>
+            <option value="in-progress">🔨 In Progress</option>
+            <option value="testing">🧪 Testing</option>
+            <option value="completed">✅ Completed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Support Needed</label>
+          <textarea class="form-control" id="pm-support" rows="2" placeholder="What help could you use? (e.g. code review, design, testing)"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" id="pm-submit-btn">Create Project</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MILESTONE MODAL ===== -->
+  <div class="modal-overlay" id="milestone-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Milestone</h3>
+        <button class="modal-close" onclick="closeMilestoneModal()">&times;</button>
+      </div>
+      <form onsubmit="handleMilestoneSubmit(event)">
+        <input type="hidden" id="ms-project-id">
+        <div class="form-group">
+          <label>Milestone Title *</label>
+          <input type="text" class="form-control" id="ms-title" placeholder="e.g. MVP launched" required>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea class="form-control" id="ms-description" rows="2" placeholder="Details about this milestone..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Add Milestone</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== COLLAB MODAL ===== -->
+  <div class="modal-overlay" id="collab-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>🤝 Request Collaboration</h3>
+        <button class="modal-close" onclick="closeCollabModal()">&times;</button>
+      </div>
+      <form onsubmit="handleCollabSubmit(event)">
+        <input type="hidden" id="collab-project-id">
+        <div class="form-group">
+          <label>Message (optional)</label>
+          <textarea class="form-control" id="collab-message" rows="3" placeholder="Tell the owner how you'd like to help..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">🙋 Raise Hand</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== SUPPORT MODAL ===== -->
+  <div class="modal-overlay" id="support-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>🛟 Report an Issue</h3>
+        <button class="modal-close" onclick="closeSupportModal()">&times;</button>
+      </div>
+      <p style="color:var(--gray-500);font-size:0.9rem;margin-bottom:1.25rem;">Found a bug or need help? Describe the issue below and we'll get back to you.</p>
+      <div class="alert alert-success" id="support-success"></div>
+      <div class="alert alert-error" id="support-error"></div>
+      <form onsubmit="handleSupportSubmit(event)">
+        <div class="form-group">
+          <label>Category *</label>
+          <select class="form-control" id="support-category" required>
+            <option value="">-- Select a category --</option>
+            <option value="login-issues">Login / Authentication Issues</option>
+            <option value="project-management">Project Management</option>
+            <option value="feed-comments">Live Feed / Comments</option>
+            <option value="collaboration">Collaboration Requests</option>
+            <option value="celebration-wall">Celebration Wall</option>
+            <option value="account-settings">Account / Profile Settings</option>
+            <option value="ui-display">UI / Display Problems</option>
+            <option value="performance">Performance / Loading</option>
+            <option value="feature-request">Feature Request</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Subject *</label>
+          <input type="text" class="form-control" id="support-subject" placeholder="Brief summary of the issue" required>
+        </div>
+        <div class="form-group">
+          <label>Description *</label>
+          <textarea class="form-control" id="support-description" rows="4" placeholder="Describe what happened, steps to reproduce, etc." required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select class="form-control" id="support-priority">
+            <option value="low">Low - Minor issue</option>
+            <option value="medium" selected>Medium - Affects usability</option>
+            <option value="high">High - Can't use feature</option>
+            <option value="critical">Critical - Platform is broken</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">📧 Send Report</button>
+        <p style="text-align:center;font-size:0.8rem;color:var(--gray-400);margin-top:0.75rem;">Report will be sent to mzansibuilds.support@gmail.com</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h3>⚙ MzansiBuilds</h3>
+          <p>Building in public, together.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#" onclick="navigate('feed')">Live Feed</a>
+          <a href="#" onclick="navigate('celebration')">Celebration Wall</a>
+          <a href="#" onclick="navigate('register')">New Project</a>
+        </div>
+      </div>
+      <hr class="footer-divider">
+      <p class="footer-copy">&copy; 2026 MzansiBuilds</p>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
