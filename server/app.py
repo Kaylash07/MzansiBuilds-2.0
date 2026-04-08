@@ -23,10 +23,22 @@ def create_app(config_class=Config):
     from server.routes.auth import auth_bp
     from server.routes.projects import projects_bp
     from server.routes.feed import feed_bp
+    from server.routes.comments import comments_bp
+    from server.routes.collaborations import collaborations_bp
+    from server.routes.notifications import notifications_bp
+    from server.routes.support import support_bp
+    from server.routes.celebration import celebration_bp
+    from server.routes.activities import activities_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(projects_bp)
     app.register_blueprint(feed_bp)
+    app.register_blueprint(comments_bp)
+    app.register_blueprint(collaborations_bp)
+    app.register_blueprint(notifications_bp)
+    app.register_blueprint(support_bp)
+    app.register_blueprint(celebration_bp)
+    app.register_blueprint(activities_bp)
 
     # Serve uploaded files
     @app.route('/uploads/<path:filename>')
