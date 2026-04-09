@@ -13,7 +13,10 @@
     <div class="navbar-brand" onclick="navigate('home')">
       Mzansi<span>Builds</span>
     </div>
-    <ul class="navbar-nav">
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-nav" id="navbar-nav">
       <li><a href="#" onclick="navigate('feed')" id="nav-feed">Live Feed</a></li>
       <li><a href="#" onclick="navigate('celebration')" id="nav-celebration">🎉 Celebration Wall</a></li>
       <li id="nav-auth-links">

@@ -30,8 +30,31 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
 });
 
+// ===================== MOBILE MENU =====================
+function toggleMobileMenu() {
+  const nav = document.getElementById('navbar-nav');
+  const hamburger = document.getElementById('hamburger');
+  nav.classList.toggle('open');
+  hamburger.classList.toggle('active');
+}
+
+function closeMobileMenu() {
+  const nav = document.getElementById('navbar-nav');
+  const hamburger = document.getElementById('hamburger');
+  if (nav) nav.classList.remove('open');
+  if (hamburger) hamburger.classList.remove('active');
+}
+
+// Close mobile menu when a nav link is clicked
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.navbar-nav a') || e.target.closest('.navbar-nav button:not(.theme-toggle)')) {
+    closeMobileMenu();
+  }
+});
+
 // ===================== NAVIGATION =====================
 function navigate(page, data) {
+  closeMobileMenu();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.navbar-nav a').forEach(a => a.classList.remove('active'));
 
