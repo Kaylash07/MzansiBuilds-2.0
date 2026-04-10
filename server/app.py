@@ -30,6 +30,7 @@ def create_app(config_class=Config):
     from server.routes.celebration import celebration_bp
     from server.routes.activities import activities_bp
     from server.routes.likes import likes_bp
+    from server.routes.bookmarks import bookmarks_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(projects_bp)
@@ -41,6 +42,7 @@ def create_app(config_class=Config):
     app.register_blueprint(celebration_bp)
     app.register_blueprint(activities_bp)
     app.register_blueprint(likes_bp)
+    app.register_blueprint(bookmarks_bp)
 
     # Serve uploaded files
     @app.route('/uploads/<path:filename>')

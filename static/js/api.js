@@ -196,6 +196,19 @@ class ApiClient {
   getLikeStatus(projectId) {
     return this._request('GET', `/projects/${projectId}/like/status`);
   }
+
+  // Bookmarks
+  toggleBookmark(projectId) {
+    return this._request('POST', `/projects/${projectId}/bookmark`);
+  }
+
+  getBookmarkStatus(projectId) {
+    return this._request('GET', `/projects/${projectId}/bookmark/status`);
+  }
+
+  getMyBookmarks() {
+    return this._request('GET', '/bookmarks');
+  }
 }
 
 const api = new ApiClient();

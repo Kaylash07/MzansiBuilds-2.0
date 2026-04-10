@@ -28,6 +28,7 @@
         <a href="#" onclick="navigate('new-project')" id="nav-new-project">+ New Project</a>
         <a href="#" onclick="navigate('my-projects')" id="nav-my-projects">My Projects</a>
         <a href="#" onclick="navigate('notifications')" id="nav-notifications" style="position:relative;">🔔 Notifications <span id="notif-badge" class="notif-badge" style="display:none;">0</span></a>
+        <a href="#" onclick="navigate('bookmarks')" id="nav-bookmarks">🔖 Saved</a>
         <a href="#" onclick="openSupportModal()" id="nav-support">🛟 Support</a>
       </li>
       <li id="nav-user-badge" style="display:none;">
@@ -384,6 +385,18 @@
   <div id="page-project" class="page">
     <div class="container">
       <div id="project-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- ===== BOOKMARKS / SAVED PROJECTS ===== -->
+  <div id="page-bookmarks" class="page">
+    <div class="container">
+      <h1 class="section-title">🔖 Saved Projects</h1>
+      <p class="subtitle">Projects you've bookmarked for later</p>
+      <div class="grid-2" id="bookmarks-list"></div>
+      <div id="bookmarks-empty" class="empty-state" style="display:none;">
+        <p>You haven't saved any projects yet. Browse the <a href="#" onclick="navigate('feed')">Live Feed</a> and bookmark projects you like!</p>
+      </div>
     </div>
   </div>
 

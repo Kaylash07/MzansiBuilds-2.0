@@ -417,6 +417,27 @@ a:hover { color: var(--primary-dark); }
   color: #ef4444;
 }
 
+/* ===== BOOKMARK BUTTON ===== */
+.bookmark-btn {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bookmark-btn:hover {
+  background: #fffbeb;
+  border-color: #fbbf24;
+  color: #f59e0b;
+}
+
+.bookmark-btn.bookmarked {
+  background: #fffbeb;
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
 /* ===== BADGES ===== */
 .badge {
   display: inline-flex;

@@ -81,6 +81,7 @@ function navigate(page, data) {
     case 'new-project': openNewProjectModal(); navigate('my-projects'); break;
     case 'notifications': loadNotifications(); break;
     case 'celebration': loadCelebration(); break;
+    case 'bookmarks': loadBookmarks(); break;
     case 'project': loadProjectDetail(data); break;
     case 'user': loadPublicProfile(data); break;
   }
@@ -456,6 +457,7 @@ async function loadProjectDetail(projectId) {
           </div>
           <div style="display:flex;gap:0.5rem;">
             ${currentUser ? `<button class="btn btn-sm like-btn" id="like-btn-${p.id}" onclick="toggleLike(${p.id})">❤️ <span id="like-count-${p.id}">${p.like_count || 0}</span></button>` : `<span class="btn btn-sm btn-ghost" style="cursor:default;">❤️ ${p.like_count || 0}</span>`}
+            ${currentUser ? `<button class="btn btn-sm bookmark-btn" id="bookmark-btn-${p.id}" onclick="toggleBookmark(${p.id})">🔖</button>` : ''}
             ${!isOwner && currentUser ? `<button class="btn btn-primary btn-sm" onclick="openCollabModal(${p.id})">🤝 Collaborate</button>` : ''}
             ${isOwner ? `
               <button class="btn btn-outline btn-sm" onclick="openEditProjectModal(${p.id})">✏️ Edit</button>
@@ -561,8 +563,9 @@ async function loadProjectDetail(projectId) {
       </div>
     `;
 
-    // Check if current user has liked this project
+    // Check if current user has liked/bookmarked this project
     checkLikeStatus(p.id);
+    checkBookmarkStatus(p.id);
   } catch {
     container.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Error loading project</h3></div>';
   }
@@ -993,6 +996,70 @@ async function checkLikeStatus(projectId) {
   }
 }
 
+// Bookmark
+async function toggleBookmark(projectId) {
+  if (!currentUser) { navigate('login'); return; }
+  try {
+    const data = await api.toggleBookmark(projectId);
+    const btn = document.getElementById(`bookmark-btn-${projectId}`);
+    if (btn) {
+      btn.classList.toggle('bookmarked', data.bookmarked);
+    }
+    showToast(data.bookmarked ? 'Project saved!' : 'Bookmark removed', 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+async function checkBookmarkStatus(projectId) {
+  if (!currentUser) return;
+  try {
+    const data = await api.getBookmarkStatus(projectId);
+    const btn = document.getElementById(`bookmark-btn-${projectId}`);
+    if (btn && data.bookmarked) {
+      btn.classList.add('bookmarked');
+    }
+  } catch {
+    // ignore
+  }
+}
+
+async function loadBookmarks() {
+  const list = document.getElementById('bookmarks-list');
+  const empty = document.getElementById('bookmarks-empty');
+  list.innerHTML = '<div class="loading-center"><div class="spinner"></div></div>';
+  empty.style.display = 'none';
+  try {
+    const data = await api.getMyBookmarks();
+    const bookmarks = data.bookmarks || [];
+    if (bookmarks.length === 0) {
+      list.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    list.innerHTML = bookmarks.map(b => {
+      const p = b.project;
+      return `
+        <div class="card project-card" onclick="navigate('project', ${p.id})" style="cursor:pointer;">
+          <div class="card-body">
+            <h3>${escapeHtml(p.title)}</h3>
+            <p class="text-muted">${escapeHtml((p.description || '').substring(0, 120))}${(p.description || '').length > 120 ? '...' : ''}</p>
+            <div class="project-meta" style="margin-top:0.5rem;">
+              ${stageBadge(p.stage)} ${categoryBadge(p.category)}
+              ${p.owner ? `<span>by <strong>${escapeHtml(p.owner.username)}</strong></span>` : ''}
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>❤️ ${p.like_count || 0}</span>
+            <span>🔖 Saved ${formatDate(b.created_at)}</span>
+          </div>
+        </div>`;
+    }).join('');
+  } catch (err) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Error loading bookmarks</h3></div>';
+  }
+}
+
 // ===================== SUPPORT =====================
 function openSupportModal() {
   if (!currentUser) { navigate('login'); return; }
@@ -1302,7 +1369,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const savedData = sessionStorage.getItem('mzansi_page_data');
   const data = savedData ? JSON.parse(savedData) : undefined;
   // Pages that require auth - fall back to home if not logged in
-  const authPages = ['dashboard', 'my-projects', 'profile', 'notifications'];
+  const authPages = ['dashboard', 'my-projects', 'profile', 'notifications', 'bookmarks'];
   if (authPages.includes(savedPage) && !currentUser) {
     navigate('home');
   } else {

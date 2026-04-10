@@ -263,3 +263,27 @@ class Like(db.Model):
             'project_id': self.project_id,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
+
+
+class Bookmark(db.Model):
+    """Bookmark model - users can save projects to revisit later."""
+    __tablename__ = 'bookmarks'
+
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id', ondelete='CASCADE'), nullable=False)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'project_id', name='unique_user_project_bookmark'),)
+
+    user = db.relationship('User', backref='bookmarks')
+    project = db.relationship('Project', backref=db.backref('bookmarks', cascade='all, delete-orphan', passive_deletes=True))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'project_id': self.project_id,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
