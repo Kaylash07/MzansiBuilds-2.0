@@ -2,7 +2,6 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.extensions import db
-from server.extensions import limiter
 from server.models import Project, Like
 
 likes_bp = Blueprint('likes', __name__, url_prefix='/api')
@@ -10,7 +9,6 @@ likes_bp = Blueprint('likes', __name__, url_prefix='/api')
 
 @likes_bp.route('/projects/<int:project_id>/like', methods=['POST'])
 @jwt_required()
-@limiter.limit('60/minute')
 def toggle_like(project_id):
     """Toggle like on a project. Like if not liked, unlike if already liked."""
     user_id = int(get_jwt_identity())

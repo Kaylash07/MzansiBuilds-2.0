@@ -13,7 +13,6 @@ class TestConfig(Config):
     JWT_SECRET_KEY = "test-secret-key"
     SECRET_KEY = "test-secret"
     MAIL_ENABLED = False
-    RATELIMIT_ENABLED = False
     UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "_test_uploads")
 
 

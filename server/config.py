@@ -22,8 +22,3 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'mzansibuilds.support@gmail.com')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', '')
     MAIL_FROM = os.environ.get('MAIL_FROM', 'MzansiBuilds <mzansibuilds.support@gmail.com>')
-
-    # Rate limiting
-    RATELIMIT_ENABLED = True
-    RATELIMIT_DEFAULT = '200/hour'
-    RATELIMIT_STORAGE_URI = 'memory://'

@@ -3,7 +3,7 @@ import os
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 from server.config import Config
-from server.extensions import db, jwt, limiter
+from server.extensions import db, jwt
 
 
 def create_app(config_class=Config):
@@ -17,7 +17,6 @@ def create_app(config_class=Config):
     # Initialize extensions
     db.init_app(app)
     jwt.init_app(app)
-    limiter.init_app(app)
     CORS(app)
 
     # Register blueprints (Open/Closed - extensible via new blueprints)

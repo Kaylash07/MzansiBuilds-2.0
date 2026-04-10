@@ -2,7 +2,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.extensions import db
-from server.extensions import limiter
 from server.models import Project, CollaborationRequest, User, Notification, Activity
 from server.email_service import notify_collab_email
 
@@ -11,7 +10,6 @@ collaborations_bp = Blueprint('collaborations', __name__, url_prefix='/api')
 
 @collaborations_bp.route('/projects/<int:project_id>/collaborate', methods=['POST'])
 @jwt_required()
-@limiter.limit('10/minute')
 def request_collaboration(project_id):
     user_id = int(get_jwt_identity())
     project = db.session.get(Project, project_id)
