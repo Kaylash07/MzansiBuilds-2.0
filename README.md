@@ -48,6 +48,12 @@ Built for the **Derivco Code Skills Challenge**.
 │       └── activities.py   # project activity timeline
 ├── templates/
 │   └── index.html          # the whole frontend lives here
+├── tests/
+│   ├── conftest.py         # shared fixtures (in-memory DB, helpers)
+│   ├── test_auth.py        # auth route tests
+│   ├── test_projects.py    # project + milestone route tests
+│   ├── test_features.py    # comments, collabs, feed, notifications, etc.
+│   └── test_models.py      # model unit tests
 ├── static/
 │   ├── css/style.css
 │   └── js/
@@ -64,6 +70,43 @@ python run.py
 ```
 
 Server starts on http://localhost:5000. That's it — SQLite creates the database automatically on first run.
+
+## Running tests
+
+The project includes 81 unit tests covering all API routes and models. Tests use an **in-memory SQLite database**, so your production data is never touched.
+
+```bash
+pip install pytest
+python -m pytest tests/ -v
+```
+
+**What's tested:**
+
+| File | What it covers | Tests |
+|---|---|---|
+| `tests/test_auth.py` | Registration, login, profile updates, password reset | 21 |
+| `tests/test_projects.py` | Project CRUD, search, filtering, milestones | 21 |
+| `tests/test_features.py` | Comments, collaborations, feed, notifications, support, celebration wall, activities | 29 |
+| `tests/test_models.py` | All model `to_dict()` methods and relationships | 10 |
+
+**Useful pytest flags:**
+
+```bash
+# Run a specific test file
+python -m pytest tests/test_auth.py -v
+
+# Run a specific test class
+python -m pytest tests/test_auth.py::TestLogin -v
+
+# Run a single test
+python -m pytest tests/test_auth.py::TestLogin::test_login_success -v
+
+# Stop on first failure
+python -m pytest tests/ -x
+
+# Show print output
+python -m pytest tests/ -s
+```
 
 ## Design decisions
 
