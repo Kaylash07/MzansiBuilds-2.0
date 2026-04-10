@@ -57,6 +57,7 @@ class Project(db.Model):
     comments = db.relationship('Comment', backref='project', lazy=True, cascade='all, delete-orphan')
     collaboration_requests = db.relationship('CollaborationRequest', backref='project', lazy=True,
                                               cascade='all, delete-orphan')
+    likes = db.relationship('Like', backref='project', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self, include_owner=True):
         data = {
@@ -76,6 +77,7 @@ class Project(db.Model):
             'milestone_count': len(self.milestones),
             'comment_count': len(self.comments),
             'collab_count': len(self.collaboration_requests),
+            'like_count': len(self.likes),
         }
         if include_owner and self.owner:
             data['owner'] = self.owner.to_dict()
@@ -237,4 +239,27 @@ class Activity(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'project_id': self.project_id,
             'user': self.user.to_dict() if self.user else None
+        }
+
+
+class Like(db.Model):
+    """Like model - users can like/endorse projects."""
+    __tablename__ = 'likes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'project_id', name='unique_user_project_like'),)
+
+    user = db.relationship('User', backref='likes')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'project_id': self.project_id,
+            'created_at': self.created_at.isoformat() if self.created_at else None
         }

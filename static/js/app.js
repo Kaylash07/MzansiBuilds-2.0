@@ -455,6 +455,7 @@ async function loadProjectDetail(projectId) {
             </div>
           </div>
           <div style="display:flex;gap:0.5rem;">
+            ${currentUser ? `<button class="btn btn-sm like-btn" id="like-btn-${p.id}" onclick="toggleLike(${p.id})">❤️ <span id="like-count-${p.id}">${p.like_count || 0}</span></button>` : `<span class="btn btn-sm btn-ghost" style="cursor:default;">❤️ ${p.like_count || 0}</span>`}
             ${!isOwner && currentUser ? `<button class="btn btn-primary btn-sm" onclick="openCollabModal(${p.id})">🤝 Collaborate</button>` : ''}
             ${isOwner ? `
               <button class="btn btn-outline btn-sm" onclick="openEditProjectModal(${p.id})">✏️ Edit</button>
@@ -559,6 +560,9 @@ async function loadProjectDetail(projectId) {
         ` : '<p style="color:var(--gray-400);padding:1rem 0;text-align:center;font-size:0.9rem;">No activity yet</p>'}
       </div>
     `;
+
+    // Check if current user has liked this project
+    checkLikeStatus(p.id);
   } catch {
     container.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Error loading project</h3></div>';
   }
@@ -626,6 +630,7 @@ function renderProjectCard(p, showFull = false) {
         ` : ''}
         <span style="font-size:0.8rem;color:var(--gray-400);">💬 ${p.comment_count || 0}</span>
         <span style="font-size:0.8rem;color:var(--gray-400);">🤝 ${p.collab_count || 0}</span>
+        <span class="like-count-badge" style="font-size:0.8rem;color:var(--gray-400);">❤️ ${p.like_count || 0}</span>
         <span style="font-size:0.8rem;color:var(--gray-400);margin-left:auto;">📅 ${formatDate(p.created_at)}</span>
       </div>
     </div>
@@ -956,6 +961,35 @@ async function postComment(projectId) {
     loadProjectDetail(projectId);
   } catch (err) {
     showToast(err.message, 'error');
+  }
+}
+
+// Like
+async function toggleLike(projectId) {
+  if (!currentUser) { navigate('login'); return; }
+  try {
+    const data = await api.toggleLike(projectId);
+    const btn = document.getElementById(`like-btn-${projectId}`);
+    const countEl = document.getElementById(`like-count-${projectId}`);
+    if (countEl) countEl.textContent = data.like_count;
+    if (btn) {
+      btn.classList.toggle('liked', data.liked);
+    }
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+async function checkLikeStatus(projectId) {
+  if (!currentUser) return;
+  try {
+    const data = await api.getLikeStatus(projectId);
+    const btn = document.getElementById(`like-btn-${projectId}`);
+    if (btn && data.liked) {
+      btn.classList.add('liked');
+    }
+  } catch {
+    // ignore - user may not be logged in
   }
 }
 

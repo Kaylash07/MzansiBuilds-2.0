@@ -396,6 +396,27 @@ a:hover { color: var(--primary-dark); }
   flex-wrap: wrap;
 }
 
+/* ===== LIKE BUTTON ===== */
+.like-btn {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.like-btn:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #ef4444;
+}
+
+.like-btn.liked {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
 /* ===== BADGES ===== */
 .badge {
   display: inline-flex;

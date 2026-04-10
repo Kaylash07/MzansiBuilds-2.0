@@ -187,6 +187,15 @@ class ApiClient {
   getActivities(projectId) {
     return this._request('GET', `/projects/${projectId}/activities`);
   }
+
+  // Likes
+  toggleLike(projectId) {
+    return this._request('POST', `/projects/${projectId}/like`);
+  }
+
+  getLikeStatus(projectId) {
+    return this._request('GET', `/projects/${projectId}/like/status`);
+  }
 }
 
 const api = new ApiClient();
