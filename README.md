@@ -126,6 +126,23 @@ python -m pytest tests/ -s
 - **SQLite** — good enough for this scale, zero setup, just works.
 - **CSS custom properties for theming** — dark mode toggles a `data-theme` attribute and all the colours swap via CSS variables.
 
+## Security
+
+| Area | Implementation |
+|---|---|
+| **Password hashing** | Werkzeug `generate_password_hash` / `check_password_hash` — passwords are never stored in plain text |
+| **JWT authentication** | Stateless tokens with 24-hour expiry, secret keys generated via `secrets.token_hex(32)` |
+| **Authorization checks** | Ownership verified on every edit/delete — projects, milestones, collaborations, notifications all check `owner_id` before allowing changes |
+| **SQL injection** | SQLAlchemy ORM throughout, no raw SQL — all queries are parameterized |
+| **XSS prevention** | `escapeHtml()` applied to every user-generated value rendered in the DOM (titles, descriptions, usernames, comments, URLs, tech tags) |
+| **Input validation** | Email regex, username min 3 chars, password min 6 chars, comment max 2000 chars, stage whitelist, pagination capped at 50 |
+| **File upload security** | Extension whitelist (png/jpg/jpeg/gif/webp), 2 MB size limit, `secure_filename()` + UUID rename to prevent path traversal |
+| **Password reset** | 6-digit codes hashed with Werkzeug and expire after 15 minutes |
+| **Error handling** | Generic login errors (`"Invalid email or password"`) — doesn't reveal which field is wrong |
+| **Database constraints** | Unique constraints on likes/bookmarks, cascade deletes on project removal, foreign key enforcement |
+| **CORS** | Flask-CORS enabled for cross-origin API access |
+| **Secret management** | Keys read from environment variables with secure random fallbacks for local development |
+
 ## Features list
 
 - User registration & login (JWT)
