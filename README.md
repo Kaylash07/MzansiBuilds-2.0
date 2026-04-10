@@ -13,6 +13,8 @@ Built for the **Derivco Code Skills Challenge**.
 - Search and filter by tech stack, category, or project stage
 - Request to collaborate on projects that interest you
 - Comment and give feedback on other people's builds
+- Like and endorse projects you appreciate
+- Bookmark projects to revisit later
 - Celebrate launched projects on the Celebration Wall
 - Get notified when someone comments or wants to collab
 - Dark mode because obviously
@@ -45,7 +47,9 @@ Built for the **Derivco Code Skills Challenge**.
 │       ├── notifications.py   # user notifications
 │       ├── support.py      # bug reports / support tickets
 │       ├── celebration.py  # celebration wall
-│       └── activities.py   # project activity timeline
+│       ├── activities.py   # project activity timeline
+│       ├── likes.py        # like/unlike toggle
+│       └── bookmarks.py    # save/unsave projects
 ├── templates/
 │   └── index.html          # the whole frontend lives here
 ├── tests/
@@ -53,7 +57,10 @@ Built for the **Derivco Code Skills Challenge**.
 │   ├── test_auth.py        # auth route tests
 │   ├── test_projects.py    # project + milestone route tests
 │   ├── test_features.py    # comments, collabs, feed, notifications, etc.
-│   └── test_models.py      # model unit tests
+│   ├── test_models.py      # model unit tests
+│   ├── test_integration.py # multi-step workflow tests
+│   ├── test_likes.py       # like feature tests
+│   └── test_bookmarks.py   # bookmark feature tests
 ├── static/
 │   ├── css/style.css
 │   └── js/
@@ -73,7 +80,7 @@ Server starts on http://localhost:5000. That's it — SQLite creates the databas
 
 ## Running tests
 
-The project includes 81 unit tests covering all API routes and models. Tests use an **in-memory SQLite database**, so your production data is never touched.
+The project includes 128 tests covering all API routes, models, and features. Tests use an **in-memory SQLite database**, so your production data is never touched.
 
 ```bash
 pip install pytest
@@ -88,6 +95,9 @@ python -m pytest tests/ -v
 | `tests/test_projects.py` | Project CRUD, search, filtering, milestones | 21 |
 | `tests/test_features.py` | Comments, collaborations, feed, notifications, support, celebration wall, activities | 29 |
 | `tests/test_models.py` | All model `to_dict()` methods and relationships | 10 |
+| `tests/test_integration.py` | Multi-step workflows (register → create → collab → comment) | 16 |
+| `tests/test_likes.py` | Like toggle, multi-user likes, cascade delete, feed/celebration integration | 15 |
+| `tests/test_bookmarks.py` | Bookmark toggle, status, saved list, cascade delete, multi-user isolation | 16 |
 
 **Useful pytest flags:**
 
@@ -133,6 +143,8 @@ python -m pytest tests/ -s
 - Activity timeline per project
 - Celebration Wall for launched projects
 - Support / bug report system
+- Like / endorse projects
+- Bookmark / save projects for later
 - Dark / light mode toggle
 - Public user profiles
 - Progress bars based on milestones
@@ -158,6 +170,8 @@ flowchart TD
     Flask --> Support["support.py"]
     Flask --> Celebration["celebration.py"]
     Flask --> Activities["activities.py"]
+    Flask --> Likes["likes.py"]
+    Flask --> Bookmarks["bookmarks.py"]
 
     Auth --> DB[(SQLite)]
     Projects --> DB
@@ -168,6 +182,8 @@ flowchart TD
     Support --> DB
     Celebration --> DB
     Activities --> DB
+    Likes --> DB
+    Bookmarks --> DB
 
     Comments -->|async| Email["Email Service"]
     Collabs -->|async| Email
@@ -272,6 +288,25 @@ erDiagram
     PROJECT ||--o{ NOTIFICATION : about
     PROJECT ||--o{ ACTIVITY : logs
     USER ||--o{ ACTIVITY : triggers
+
+    LIKE {
+        int id PK
+        datetime created_at
+        int user_id FK
+        int project_id FK
+    }
+
+    BOOKMARK {
+        int id PK
+        datetime created_at
+        int user_id FK
+        int project_id FK
+    }
+
+    USER ||--o{ LIKE : gives
+    PROJECT ||--o{ LIKE : receives
+    USER ||--o{ BOOKMARK : saves
+    PROJECT ||--o{ BOOKMARK : saved_by
 ```
 
 ## Colours
