@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from server.extensions import db
+from server.extensions import limiter
 from server.models import User, Project
 import re
 
@@ -26,6 +27,7 @@ def _validate_email(email):
 
 
 @auth_bp.route('/register', methods=['POST'])
+@limiter.limit('5/minute')
 def register():
     data = request.get_json()
     if not data:
@@ -64,6 +66,7 @@ def register():
 
 
 @auth_bp.route('/login', methods=['POST'])
+@limiter.limit('5/minute')
 def login():
     data = request.get_json()
     if not data:
@@ -161,6 +164,7 @@ def upload_avatar():
 
 
 @auth_bp.route('/forgot-password', methods=['POST'])
+@limiter.limit('3/minute')
 def forgot_password():
     data = request.get_json()
     if not data:
@@ -188,6 +192,7 @@ def forgot_password():
 
 
 @auth_bp.route('/reset-password', methods=['POST'])
+@limiter.limit('5/minute')
 def reset_password():
     data = request.get_json()
     if not data:

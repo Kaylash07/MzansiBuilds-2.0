@@ -2,6 +2,7 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.extensions import db
+from server.extensions import limiter
 from server.models import Project, Bookmark
 
 bookmarks_bp = Blueprint('bookmarks', __name__, url_prefix='/api')
@@ -9,6 +10,7 @@ bookmarks_bp = Blueprint('bookmarks', __name__, url_prefix='/api')
 
 @bookmarks_bp.route('/projects/<int:project_id>/bookmark', methods=['POST'])
 @jwt_required()
+@limiter.limit('60/minute')
 def toggle_bookmark(project_id):
     """Toggle bookmark on a project. Save if not saved, unsave if already saved."""
     user_id = int(get_jwt_identity())

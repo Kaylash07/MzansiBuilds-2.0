@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.extensions import db
+from server.extensions import limiter
 from server.models import Project, Milestone, Activity, User
 
 projects_bp = Blueprint('projects', __name__, url_prefix='/api/projects')
@@ -12,6 +13,7 @@ VALID_STAGES = ['idea', 'planning', 'in-progress', 'testing', 'completed']
 
 @projects_bp.route('', methods=['POST'])
 @jwt_required()
+@limiter.limit('20/minute')
 def create_project():
     user_id = int(get_jwt_identity())
     data = request.get_json()
@@ -110,6 +112,7 @@ def get_project(project_id):
 
 @projects_bp.route('/<int:project_id>', methods=['PUT'])
 @jwt_required()
+@limiter.limit('30/minute')
 def update_project(project_id):
     user_id = int(get_jwt_identity())
     project = db.session.get(Project, project_id)
@@ -158,6 +161,7 @@ def update_project(project_id):
 
 @projects_bp.route('/<int:project_id>', methods=['DELETE'])
 @jwt_required()
+@limiter.limit('10/minute')
 def delete_project(project_id):
     user_id = int(get_jwt_identity())
     project = db.session.get(Project, project_id)
@@ -175,6 +179,7 @@ def delete_project(project_id):
 
 @projects_bp.route('/<int:project_id>/milestones', methods=['POST'])
 @jwt_required()
+@limiter.limit('30/minute')
 def add_milestone(project_id):
     user_id = int(get_jwt_identity())
     project = db.session.get(Project, project_id)

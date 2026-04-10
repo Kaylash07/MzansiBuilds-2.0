@@ -2,6 +2,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.extensions import db
+from server.extensions import limiter
 from server.models import User, SupportReport
 
 support_bp = Blueprint('support', __name__, url_prefix='/api')
@@ -9,6 +10,7 @@ support_bp = Blueprint('support', __name__, url_prefix='/api')
 
 @support_bp.route('/support', methods=['POST'])
 @jwt_required()
+@limiter.limit('5/minute')
 def submit_support():
     user_id = int(get_jwt_identity())
     user = db.session.get(User, user_id)

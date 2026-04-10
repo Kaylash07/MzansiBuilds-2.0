@@ -2,6 +2,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.extensions import db
+from server.extensions import limiter
 from server.models import Project, Comment, User, Notification, Activity
 from server.email_service import notify_comment_email
 
@@ -20,6 +21,7 @@ def get_comments(project_id):
 
 @comments_bp.route('/projects/<int:project_id>/comments', methods=['POST'])
 @jwt_required()
+@limiter.limit('20/minute')
 def add_comment(project_id):
     user_id = int(get_jwt_identity())
     project = db.session.get(Project, project_id)
