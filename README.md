@@ -1,5 +1,7 @@
 # MzansiBuilds
 
+![CI](https://github.com/Kaylash07/MzansiBuilds-2.0/actions/workflows/ci.yml/badge.svg)
+
 A platform where South African developers can share what they're building, find collaborators, and celebrate shipped projects together.
 
 Built for the **Derivco Code Skills Challenge**.
@@ -142,6 +144,27 @@ python -m pytest tests/ -s
 | **Database constraints** | Unique constraints on likes/bookmarks, cascade deletes on project removal, foreign key enforcement |
 | **CORS** | Flask-CORS enabled for cross-origin API access |
 | **Secret management** | Keys read from environment variables with secure random fallbacks for local development |
+
+## CI / CD
+
+The project uses **GitHub Actions** for continuous integration. The pipeline is defined in `.github/workflows/ci.yml` and runs automatically on every push to `main` and on pull requests.
+
+| Job | What it does |
+|---|---|
+| **test** | Installs dependencies and runs the full pytest suite against Python 3.11 and 3.12 |
+| **lint** | Runs flake8 to catch syntax errors, undefined names, and style warnings |
+
+This ensures that every change is validated before it reaches the main branch: tests must pass and critical lint errors must be resolved.
+
+## Ethical Use of AI
+
+See [AI_USAGE.md](AI_USAGE.md) for a full disclosure of how AI tools (GitHub Copilot, ChatGPT/Claude) were used during development, the safeguards applied, and the data privacy commitments made.
+
+**Key principles:**
+- AI was used for productivity (scaffolding, debugging), never as a decision-maker
+- Every AI suggestion was manually reviewed, tested, and verified before committing
+- No user data is sent to any AI service — the application has zero runtime AI integration
+- All security-critical code was designed manually following established best practices
 
 ## Features list
 

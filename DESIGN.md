@@ -61,9 +61,12 @@ See README for Mermaid diagrams (architecture + ERD).
 
 ---
 
-## 6. What I'd Improve with More Time
-- Add tests (unit + integration)
-- CI/CD pipeline for auto-deploy
+## 6. What's Been Done
+- **128 tests** (unit + integration) covering all routes, models, and workflows
+- **CI/CD pipeline** via GitHub Actions — runs tests and linting on every push and PR
+- **Ethical AI documentation** — see [AI_USAGE.md](AI_USAGE.md) for full disclosure of AI tool usage
+
+## 7. What I'd Improve with More Time
 - Switch to Postgres
 - Add admin/moderator roles
 - More granular permissions (edit/collab)
@@ -73,7 +76,7 @@ See README for Mermaid diagrams (architecture + ERD).
 
 ---
 
-## 7. References
+## 8. References
 - [Flask Docs](https://flask.palletsprojects.com/)
 - [SQLAlchemy Docs](https://docs.sqlalchemy.org/)
 - [JWT Auth](https://flask-jwt-extended.readthedocs.io/)

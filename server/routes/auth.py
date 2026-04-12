@@ -223,8 +223,3 @@ def reset_password():
     db.session.commit()
 
     return jsonify({'message': 'Password reset successful. You can now login.'}), 200
-    if data.get('avatar_url') is not None:
-        user.avatar_url = data['avatar_url'].strip()
-
-    db.session.commit()
-    return jsonify({'user': user.to_dict()}), 200
