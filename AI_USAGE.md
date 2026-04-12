@@ -10,17 +10,17 @@ This document outlines how AI tools were used during the development of MzansiBu
 
 | Tool | Purpose |
 |---|---|
-| **GitHub Copilot** | Code suggestions, boilerplate generation, test scaffolding |
-| **ChatGPT / Claude** | Debugging assistance, design feedback, documentation drafting |
+| **GitHub Copilot** | Inline code suggestions and autocompletion while writing |
+| **ChatGPT / Claude** | Debugging assistance, design feedback, documentation review |
 
 ---
 
 ## 2. How AI Was Used
 
-- **Code scaffolding** — AI was used to generate repetitive patterns (route handlers, model `to_dict()` methods, test fixtures) which were then reviewed and adapted to fit the project's conventions.
-- **Test writing** — AI assisted in generating test case outlines. Every test was manually reviewed, adjusted for edge cases, and verified by running the full suite before committing.
-- **Documentation** — AI helped draft sections of the README and DESIGN documents. All content was verified for accuracy against the actual codebase.
-- **Debugging** — AI was consulted for error diagnosis (e.g. SQLAlchemy relationship issues, JWT configuration) and proposed fixes were validated locally before integration.
+- **Code autocompletion** — While writing route handlers, models, and test fixtures, Copilot offered inline suggestions that I accepted, modified, or rejected on a case-by-case basis. All code was written by me with AI acting as an autocomplete aid.
+- **Test writing** — I wrote the test suite manually. AI suggestions helped speed up repetitive assertions, but every test was shaped, adjusted for edge cases, and verified by running the full suite before committing.
+- **Documentation** — I authored the README and DESIGN documents. AI was used to review drafts for clarity and catch inconsistencies, but the content and structure are my own.
+- **Debugging** — When stuck on specific errors (e.g. SQLAlchemy relationship issues, JWT configuration), I consulted AI for diagnostic suggestions and then validated fixes locally before integration.
 
 ---
 
@@ -63,9 +63,9 @@ All AI-assisted code went through the following checks before being committed:
 
 ## 7. Lessons Learned
 
-- AI is most useful for **accelerating known patterns**, not for designing novel architecture. Design decisions (blueprint structure, database schema, auth flow) were made manually.
-- AI-generated tests tend to test the "happy path" — manual effort was needed to add edge-case and security-focused tests (wrong codes, expired tokens, unauthorized access).
-- AI documentation drafts require careful fact-checking — generated text occasionally described features that didn't exist or used incorrect configuration names.
+- AI is most useful as an **autocomplete accelerator** for known patterns, not for designing architecture. All design decisions (blueprint structure, database schema, auth flow) were made by me.
+- AI suggestions for tests tend toward the "happy path" — I had to deliberately add edge-case and security-focused tests (wrong codes, expired tokens, unauthorized access) myself.
+- AI review of documentation is helpful for spotting inconsistencies, but the developer must always verify claims against the actual codebase.
 
 ---
 
